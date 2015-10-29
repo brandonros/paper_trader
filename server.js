@@ -1,5 +1,6 @@
 var http = require('http');
 var URL = require('url');
+var fs = require('fs');
 
 var server = module.exports;
 
@@ -28,6 +29,8 @@ server.init = function (port, handler) {
 			server.send_response(resp, res['status'], res['headers'], res['body'])
 		})
 		.catch(function (err) {
+			console.log(err['stack']);
+
 			server.send_error(resp, err);
 		});
 	});
@@ -36,22 +39,36 @@ server.init = function (port, handler) {
 };
 
 server.send_response = function (resp, status, headers, body) {
-	var stringified_body = JSON.stringify(body);
-
-	headers = Object.assign({}, headers, {
-		'Content-Type': 'application/json',
-		'Content-Length': Buffer.byteLength(stringified_body)
-	});
-
 	resp.writeHeader(status, headers);
 
-	resp.write(stringified_body);
+	resp.write(body);
 
 	resp.end();
 };
 
 server.send_error = function (resp, err) {
-	server.send_response(500, {}, { error: err['stack'] } );
+	var stringified_body = JSON.stringify({
+		error: err['stack']
+	});
+
+	var headers = {
+		'Content-Type': 'application/json',
+		'Content-Length': Buffer.byteLength(stringified_body)
+	};
+
+	server.send_response(500, headers, stringified_body);
+};
+
+server.read_file = function (filename) {
+	return new Promise(function (resolve, reject) {
+		fs.readFile(filename, function (err, res) {
+			if (err) {
+				return reject(err);
+			}
+
+			return resolve(res.toString());
+		});
+	});
 };
 
 server.read_body = function (req) {
