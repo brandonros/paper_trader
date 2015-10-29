@@ -1,24 +1,12 @@
-var server = require('./server');
+var server = require('./lib/server');
 
 var function_map = {
 	'GET': {
-		'/': serve_root
+		'/': server.serve_file,
+		'/main.js': server.serve_file,
+		'/cookies.js': server.serve_file,
 	}
 };
-
-function serve_root(headers, body) {
-	return server.read_file('index.html')
-		.then(function (res) {
-			return {
-				status: 200,
-				headers: {
-					'Content-Type': 'text/html',
-					'Content-Length': Buffer.byteLength(res)
-				},
-				body: res
-			};
-		});
-}
 
 function not_found() {
 	var resp_body = 'Not found';
@@ -34,7 +22,7 @@ function not_found() {
 }
 
 function request_handler(method, url, headers, body) {
-	return (function_map[method][url] || not_found)(headers, body);
+	return (function_map[method][url] || not_found)(method, url, headers, body);
 }
 
 server.init(3000, request_handler);
