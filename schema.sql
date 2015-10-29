@@ -1,28 +1,32 @@
-CREATE TABLE account(
-	id serial primary key,
-	email text,
+CREATE TABLE IF NOT EXISTS account(
+	id serial PRIMARY KEY,
+	email text UNIQUE,
 	password text,
 	balance numeric,
 	created timestamp
 );
 
-CREATE TABLE deposit(
-	id serial primary key,
-	account_id int,
+CREATE TABLE IF NOT EXISTS deposit(
+	id serial PRIMARY KEY,
+	account_id int REFERENCES account(id),
 	amount numeric,
 	created timestamp
 );
 
-CREATE TABLE withdrawl(
-	id serial primary key,
-	account_id int,
+CREATE INDEX deposit_account_index ON deposit(account_id);
+
+CREATE TABLE IF NOT EXISTS withdrawl(
+	id serial PRIMARY KEY,
+	account_id int REFERENCES account(id),
 	amount numeric,
 	created timestamp
 );
 
-CREATE TABLE transaction(
-	id serial primary key,
-	account_id int,
+CREATE INDEX withdrawl_account_index ON withdrawl(account_id);
+
+CREATE TABLE IF NOT EXISTS transaction(
+	id serial PRIMARY KEY,
+	account_id int REFERENCES account(id),
 	type int,
 	ticker text,
 	quantity int,
@@ -32,12 +36,16 @@ CREATE TABLE transaction(
 	created timestamp
 );
 
-CREATE TABLE dividend(
-	id serial primary key,
-	account_id int,
+CREATE INDEX transaction_account_index ON transaction(account_id);
+
+CREATE TABLE IF NOT EXISTS dividend(
+	id serial PRIMARY KEY,
+	account_id int REFERENCES account(id),
 	ticker text,
 	quantity int,
 	amount numeric,
 	total numeric,
 	created timestamp
 );
+
+CREATE INDEX dividend_account_index ON dividend(account_id);
