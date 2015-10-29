@@ -3,6 +3,7 @@ var server = require('./lib/server');
 var function_map = {
 	'GET': {
 		'/': server.serve_file,
+		'/login.html': server.serve_file,
 		'/main.js': server.serve_file,
 		'/cookies.js': server.serve_file,
 	}
