@@ -1,14 +1,13 @@
 <div><input type="email" id="email" placeholder="E-mail address"></div>
 <div><input type="password" id="password" placeholder="Password"></div>
-<div><button type="button" id="login">Login</button></div>
-<a class="nav-link" data-title="Register" href="register.html">Register</a>
+<div><button type="button" id="register">Register</button></div>
 
 <script type="text/javascript">
-function login() {
+function register() {
 	var email = document.getElementById('email').value;
 	var password = document.getElementById('password').value;
 
-	post_json('/login', {
+	post_json('/register', {
 		email: email,
 		password: password
 	})
@@ -20,5 +19,5 @@ function login() {
 	});
 }
 
-document.getElementById('login').addEventListener('click', login);
+document.getElementById('register').addEventListener('click', register);
 </script>

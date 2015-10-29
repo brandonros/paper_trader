@@ -29,18 +29,32 @@ function parse_scripts() {
 	}
 }
 
+function navigate(title, path) {
+	history.replaceState(undefined, title, path);
+
+	window.dispatchEvent(new Event('popstate'));
+}
+
 function handle_token() {
 	var token = docCookies.getItem('token');
 
 	if (!token) {
-		history.replaceState(undefined, 'Login', '#/login.html');
+		navigate('Login', '#/login.html');
 	}
 
 	else {
-		history.replaceState(undefined, 'Dashboard', '#/dashboard.html');
-	}
+		navigate('Dashboard', '#/dashboard.html');
+	}	
+}
 
-	window.dispatchEvent(new Event('popstate'));
+function handle_link(el) {
+	var ignorable = window.location.protocol + '//' + window.location.host + '/';
+	var path = '#/' + el['href'].replace(ignorable, '');
+	var title = el['data-title'];
+
+	console.log(path);
+
+	navigate(title, path);
 }
 
 function post_json(url, body) {
@@ -66,4 +80,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	container = document.getElementById('container');
 
 	handle_token();
+});
+
+document.body.addEventListener('click', function (event) {
+	var el = event['target'];
+
+	if (el.className === 'nav-link') {
+		event.preventDefault();
+
+		handle_link(el);
+	}
 });
