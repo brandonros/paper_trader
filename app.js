@@ -6,8 +6,15 @@ var function_map = {
 		'/login.html': server.serve_file,
 		'/main.js': server.serve_file,
 		'/cookies.js': server.serve_file,
+	},
+	'POST': {
+		'/login': login
 	}
 };
+
+function login() {
+	return server.generate_response({ success: 123 });
+}
 
 function not_found() {
 	var resp_body = 'Not found';

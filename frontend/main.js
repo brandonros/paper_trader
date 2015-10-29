@@ -43,6 +43,23 @@ function handle_token() {
 	window.dispatchEvent(new Event('popstate'));
 }
 
+function post_json(url, body) {
+	return fetch(url, {
+		method: 'post',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(body)
+	})
+	.then(function (res) {
+		if (res['status'] !== 200) {
+			throw new Error('Bad status');
+		}
+		
+		return res.json();
+	});
+}
+
 document.addEventListener('DOMContentLoaded', function (event) {
 	window.addEventListener('popstate', handle_popstate);
 
