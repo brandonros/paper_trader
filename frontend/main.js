@@ -52,8 +52,6 @@ function handle_link(el) {
 	var path = '#/' + el['href'].replace(ignorable, '');
 	var title = el['data-title'];
 
-	console.log(path);
-
 	navigate(title, path);
 }
 

@@ -19,26 +19,35 @@ var function_map = {
 	}
 };
 
-function login() {
-	var sql = squel.select()
+function login(method, url, headers, body) {
+	var query = squel.select()
 		.from('account')
-		.toString();
+		.where('email = ?', body['email'])
+		.toParam();
 
-	return db.query(sql)
+	return db.query(query['text'], query['values'])
 		.then(function (res) {
+			if (res.length === 0) {
+				throw new Error('E-mail not found');
+			}
+
+			if (!bcrypt.compareSync(body['password'], res[0]['password'])) {
+				throw new Error('Invalid password');
+			}
+			
 			return server.generate_response(res);
 		});
 }
 
 function register(method, url, headers, body) {
-	var sql = squel.insert()
+	var query = squel.insert()
 		.into('account')
 		.set('email', body['email'])
 		.set('password', bcrypt.hashSync(body['password'], 8))
 		.returning('id')
-		.toString();
+		.toParam();
 
-	return db.query(sql)
+	return db.query(query['text'], query['values'])
 		.then(function (res) {
 			return server.generate_response(res);
 		});
